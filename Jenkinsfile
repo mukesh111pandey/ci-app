@@ -25,10 +25,10 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonarqube') {
                     sh '''
-                    sonar-scanner \
-                    -Dsonar.projectKey=ci-app \
-                    -Dsonar.sources=. \
-                    -Dsonar.login=$SONAR_AUTH_TOKEN
+                        sonar-scanner \
+                        -Dsonar.projectKey=ci-app \
+                        -Dsonar.sources=. \
+                        -Dsonar.login=$SONAR_AUTH_TOKEN
                     '''
                 }
             }
@@ -36,9 +36,18 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
-                timeout(time: 2, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
+                script {
+                    def qg = waitForQualityGate()
+                    if (qg.status != 'OK') {
+                        error "❌ Quality Gate Failed: ${qg.status}"
+                    }
                 }
+            }
+        }
+
+        stage('Finish') {
+            steps {
+                echo "✅ CI Pipeline completed successfully"
             }
         }
     }
