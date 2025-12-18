@@ -1,13 +1,7 @@
-pipeline {
+kpipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/mukesh111pandey/ci-app.git'
-            }
-        }
-
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {
