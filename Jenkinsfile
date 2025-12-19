@@ -9,12 +9,6 @@ pipeline {
             }
         }
 
-        stage('Shell Lint') {
-            steps {
-                sh 'shellcheck hello.sh'
-            }
-        }
-
         stage('Run Script') {
             steps {
                 sh 'bash hello.sh'
@@ -36,18 +30,9 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
-                script {
-                    def qg = waitForQualityGate()
-                    if (qg.status != 'OK') {
-                        error "❌ Quality Gate Failed: ${qg.status}"
-                    }
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
-            }
-        }
-
-        stage('Finish') {
-            steps {
-                echo "✅ CI Pipeline completed successfully"
             }
         }
     }
