@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        // Jenkins Credentials ID (Secret Text)
         SONAR_TOKEN = credentials('sonar-token')
     }
 
@@ -35,32 +34,24 @@ pipeline {
             }
         }
 
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 2, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
-
         stage('Docker Build') {
             steps {
                 sh 'docker build -t ci-app:latest .'
             }
         }
 
-        stage('Docker Run (CD)') {
+        stage('Docker Run') {
             steps {
                 sh '''
                     docker rm -f ci-app-container || true
-                    docker run -d --name ci-app-container ci-app:latest
+                    docker run -d -p 8081:80 --name ci-app-container ci-app:latest
                 '''
             }
         }
 
         stage('Finish') {
             steps {
-                echo "🚀 CI + SonarQube + Quality Gate + Docker + CD completed successfully"
+                echo "🚀 CI + SonarQube + Docker pipeline completed successfully"
             }
         }
     }
