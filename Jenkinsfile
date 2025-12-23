@@ -28,9 +28,17 @@ pipeline {
             }
         }
 
+        stage('Docker Build') {
+            steps {
+                sh '''
+                    docker build -t ci-app:latest .
+                '''
+            }
+        }
+
         stage('Finish') {
             steps {
-                echo "✅ CI Pipeline completed successfully"
+                echo "✅ CI + Docker Pipeline completed successfully"
             }
         }
     }
