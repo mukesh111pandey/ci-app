@@ -30,15 +30,22 @@ pipeline {
 
         stage('Docker Build') {
             steps {
+                sh 'docker build -t ci-app:latest .'
+            }
+        }
+
+        stage('Docker Run (CD)') {
+            steps {
                 sh '''
-                    docker build -t ci-app:latest .
+                    docker rm -f ci-app-container || true
+                    docker run -d --name ci-app-container ci-app:latest
                 '''
             }
         }
 
         stage('Finish') {
             steps {
-                echo "✅ CI + Docker Pipeline completed successfully"
+                echo "🚀 CI + Docker + CD completed successfully"
             }
         }
     }
