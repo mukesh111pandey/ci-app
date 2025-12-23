@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        // Jenkins Credentials ID (Secret Text)
+        SONAR_TOKEN = credentials('sonar-token')
+    }
+
     stages {
 
         stage('Checkout') {
@@ -21,8 +26,10 @@ pipeline {
                     sh '''
                         sonar-scanner \
                         -Dsonar.projectKey=ci-app \
+                        -Dsonar.projectName=ci-app \
                         -Dsonar.sources=. \
-                        -Dsonar.login=$SONAR_AUTH_TOKEN
+                        -Dsonar.host.url=http://localhost:9000 \
+                        -Dsonar.login=$SONAR_TOKEN
                     '''
                 }
             }
@@ -45,7 +52,7 @@ pipeline {
 
         stage('Finish') {
             steps {
-                echo "🚀 CI + Docker + CD completed successfully"
+                echo "🚀 CI + SonarQube + Docker + CD completed successfully"
             }
         }
     }
