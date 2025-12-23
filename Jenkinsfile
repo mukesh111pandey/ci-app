@@ -1,4 +1,4 @@
-pipeline {
+kpipeline {
     agent any
 
     environment {
@@ -35,6 +35,14 @@ pipeline {
             }
         }
 
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
         stage('Docker Build') {
             steps {
                 sh 'docker build -t ci-app:latest .'
@@ -52,7 +60,7 @@ pipeline {
 
         stage('Finish') {
             steps {
-                echo "🚀 CI + SonarQube + Docker + CD completed successfully"
+                echo "🚀 CI + SonarQube + Quality Gate + Docker + CD completed successfully"
             }
         }
     }
