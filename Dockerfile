@@ -1,9 +1,8 @@
 FROM ubuntu:22.04
 
+RUN apt-get update && apt-get install -y bash
+
 WORKDIR /app
-
-COPY hello.sh .
-
-RUN chmod +x hello.sh
+COPY . .
 
 CMD ["bash", "hello.sh"]
