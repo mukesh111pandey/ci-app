@@ -27,12 +27,14 @@ pipeline {
                         -Dsonar.projectKey=ci-app \
                         -Dsonar.projectName=ci-app \
                         -Dsonar.sources=. \
-                        -Dsonar.host.url=http://localhost:9000 \
                         -Dsonar.login=$SONAR_TOKEN
                     '''
                 }
             }
         }
+
+        // 🔕 Quality Gate skip (beginner + stable pipeline)
+        // Real projects me ye enable hota hai
 
         stage('Docker Build') {
             steps {
@@ -40,18 +42,18 @@ pipeline {
             }
         }
 
-        stage('Docker Run') {
+        stage('Docker Run (CD)') {
             steps {
                 sh '''
                     docker rm -f ci-app-container || true
-                    docker run -d -p 8081:80 --name ci-app-container ci-app:latest
+                    docker run -d -p 8082:80 --name ci-app-container ci-app:latest
                 '''
             }
         }
 
         stage('Finish') {
             steps {
-                echo "🚀 CI + SonarQube + Docker pipeline completed successfully"
+                echo "🚀 CI + SonarQube + Docker + CD COMPLETED SUCCESSFULLY"
             }
         }
     }
